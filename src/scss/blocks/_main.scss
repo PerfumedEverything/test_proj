@@ -1,0 +1,69 @@
+@use '../general' as *;
+
+.main {
+    display: flex;
+    margin-left: 256px; 
+    padding: 24px 0 16px; 
+    background-color: var(--color-gray);
+    flex: 1;
+
+    @include mobile {
+        margin-left: 0;
+        padding-top: 64px;
+    }
+
+    &__container { 
+        @include flex-col;
+        
+        width: 100%;
+        padding: 0 12px;
+    }
+
+    &__title {
+        margin-bottom: 12px;
+    }
+
+    &__settings {
+        position: relative;
+        display: block;
+        width: 48px;
+        height: 48px;
+        background-color: var(--color-white);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all .2s ease;
+        
+        &:hover {
+            background-color: var(--color-gray);
+        }
+
+        &:active {
+            background-color: var(--color-gray-2);
+        }
+
+        &-icon {
+            position: absolute;
+            content: '';
+            width: 24px;
+            height: 24px;
+            top: 50%;
+            left: 50%;
+            translate: -50% -50%;
+            background: url(/icons/settings.svg);
+        }
+    }
+
+    &__content {
+        display: grid;
+        gap: 12px;
+        width: 100%;
+        grid-template-columns: repeat(12, 1fr);
+        grid-template-rows: repeat(12, auto);    
+        flex: 1;
+        margin-top: 16px;
+    
+        @include tablet {
+            gap: 8px;
+        }
+    }
+}

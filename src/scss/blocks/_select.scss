@@ -1,0 +1,90 @@
+@use '../general' as *;
+
+.select-container {
+    @include flex-center-between
+}
+
+.select-box {
+    position: relative;
+    max-width: 276px;
+    width: 100%;
+    border-radius: 8px;
+    transition: all .2s ease;
+
+    &:hover {
+        background-color: var(--color-gray)
+    }
+
+    &:active {
+        background-color: var(--color-gray-2)
+    }
+
+    @include tablet {
+        max-width: 240px
+    }
+
+    @include mobile {
+        max-width: 200px;
+    }
+}
+
+.select-value {
+    @include flex-center-between;
+
+    padding: 6px 12px;
+    background-color: var(--color-gray);
+    border-radius: 8px;
+    cursor: pointer;
+
+    &__labels {
+        @include flex-col
+    }
+
+    &__subtitle {
+        font-size: 12px;
+        color: var(--color-gray-3);
+    }
+
+    &__title {
+        font-size: 14px;
+        color: var(--color-black);
+    }
+
+    &__arrow {
+        width: 16px;
+        height: 16px;
+        background: url(/icons/arrow-down.svg) center no-repeat;
+        transition: all .2s ease;
+        
+        &.rotate {
+            transform: rotate(180deg);
+        }
+    }
+}
+
+.select-options {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: var(--color-white);
+    border: 1px solid var(--color-gray);
+    border-radius: 8px;
+    margin-top: 5px;
+    z-index: 10;
+    
+    & li {
+        padding: 6px 12px;
+        cursor: pointer;
+
+        &:hover {
+            background-color: var(--color-gray);
+        }
+    }
+}
+
+.hidden-select {
+    display: none;
+}
+

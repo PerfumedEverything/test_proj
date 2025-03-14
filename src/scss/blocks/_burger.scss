@@ -1,0 +1,20 @@
+@use '../general' as *;
+
+.burger-button {
+    @include flex-jc-center;
+
+    flex-direction: column;
+    gap: 3px;
+    height: 40px;
+    z-index: 20;
+    color: var(--color-burger);
+    background-color: transparent;
+    border: none;
+
+    &__line {
+        background-color: currentColor;
+        width: 3px;
+        height: 3px;
+        border-radius: 50%;
+    }
+}
