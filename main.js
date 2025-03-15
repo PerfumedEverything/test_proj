@@ -57,14 +57,16 @@ document.addEventListener('DOMContentLoaded', () => {
             element: document.querySelector('.header__profile'),
             breakpoint: 1024
         },
+        
+        search: {
+            element: document.querySelector('.header__search'),
+            breakpoint: 800
+        },
+
         nav: {
             element: document.getElementById('nav'),
             breakpoint: 800
         },
-        search: {
-            element: document.querySelector('.header__search'),
-            breakpoint: 587
-        }
     };
 
     const originalPositions = new WeakMap();

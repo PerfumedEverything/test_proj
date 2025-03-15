@@ -46,20 +46,22 @@
         #nav {
             @include tablet {
                 display: flex;
+                order: 2;
             }
         }
 
         .header__profile {
             @include tablet-s {
                 display: flex;
-                margin-bottom: 20px;
+                order: 1;
             }
         }
 
         .header__search {
-            @include mobile {
+            @include tablet-s {
                 display: flex;
                 width: 210px;
+                order: 3;
             }
         }
     }
