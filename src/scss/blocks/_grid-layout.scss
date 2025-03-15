@@ -93,4 +93,36 @@
             grid-area: 11 / 1 / span 5 / span 12; 
         }
     }
+
+    @include mobile {
+        width: 100%;
+        min-height: 120px;
+        flex-shrink: 0;
+
+        &-1 { 
+            height: 300px;
+        }
+        &-2 { 
+            height: 120px;
+        }
+        &-3 { 
+            height: 280px;
+        }
+        &-4 {
+            height: 140px;
+        }
+        &-5 { 
+            height: 300px;
+        }
+        &-6 { 
+            height: 300px;
+        }
+        &-7,
+        &-8,
+        &-9,
+        &-10 {
+            height: 120px;
+        }
+        
+    }
 }

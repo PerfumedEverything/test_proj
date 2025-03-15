@@ -65,5 +65,10 @@
         @include tablet {
             gap: 8px;
         }
+        
+        @include mobile {
+            display: flex;
+            flex-direction: column;
+        }
     }
 }
