@@ -1,5 +1,6 @@
 import './src/scss/style.scss';
 
+//Иконки в боковом меню
 const initIcons = () => {
     document.querySelectorAll('.side-menu__icon').forEach((icon, index) => {
         Object.assign(icon.style, {
@@ -13,7 +14,7 @@ const initIcons = () => {
     });
 };
 
-
+//Селеект валью
 const initCustomSelect = () => {
     const selectValue = document.querySelector('.select-value');
     const selectOptions = document.querySelector('.select-options');
@@ -49,7 +50,7 @@ const initCustomSelect = () => {
     });
 };
 
-
+//Адаптив шапки
 class ResponsiveMenu {
     constructor() {
         this.burgerButton = document.getElementById('burger-button');
@@ -110,6 +111,7 @@ class ResponsiveMenu {
         }}
 }
 
+//Грид сетка
     class GridManager {
         constructor() {
     this.grid = document.querySelector('.main__content');
