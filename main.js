@@ -1,185 +1,164 @@
 import './src/scss/style.scss';
 
-const icons = document.querySelectorAll('.side-menu__icon');
+const initIcons = () => {
+    document.querySelectorAll('.side-menu__icon').forEach((icon, index) => {
+        Object.assign(icon.style, {
+            backgroundImage: `url(/icons/icon-${index + 1}.svg)`,
+            backgroundSize: 'contain',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            width: '24px',
+            height: '24px'
+        });
+    });
+};
 
-icons.forEach((icon, index) => {
-    const iconNumber = index + 1;
-    icon.style.backgroundImage = `url(/icons/icon-${iconNumber}.svg)`;
-    icon.style.backgroundSize = 'contain';
-    icon.style.backgroundPosition = 'center';
-    icon.style.backgroundRepeat = 'no-repeat';
-    icon.style.width = '24px';
-    icon.style.height = '24px';
-});
 
-document.addEventListener('DOMContentLoaded', function() {
+const initCustomSelect = () => {
     const selectValue = document.querySelector('.select-value');
     const selectOptions = document.querySelector('.select-options');
     const hiddenSelect = document.querySelector('.hidden-select');
-    const options = document.querySelectorAll('.select-options li');
     const arrow = document.querySelector('.select-value__arrow');
 
-    selectValue.addEventListener('click', function() {
-        const isOpen = selectOptions.style.display === 'block';
-        selectOptions.style.display = selectOptions.style.display === 'block' ? 'none' : 'block';
-        arrow.classList.toggle('rotate', !isOpen);
-});
-
-    options.forEach(option => {
-        option.addEventListener('click', function() {
-            const value = this.getAttribute('data-value');
-            const title = this.querySelector('.select-value__title').textContent;
-            const subtitle = this.querySelector('.select-value__subtitle').textContent;
-
-        hiddenSelect.value = value;
-            document.querySelector('.select-value__title').textContent = title;
-            document.querySelector('.select-value__subtitle').textContent = subtitle;
-
-        selectOptions.style.display = 'none';
-        arrow.classList.remove('rotate'); 
-    });
-});
-
-    document.addEventListener('click', function(event) {
-        if (!selectValue.contains(event.target) && !selectOptions.contains(event.target)) {
-            selectOptions.style.display = 'none';
-        }
-    });
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-    const burgerButton = document.getElementById('burger-button');
-    const sideBar = document.getElementById('side-bar');
-    const sideElements = sideBar.querySelector('.side-bar__elements');
-    
-    const elements = {
-        profile: {
-            element: document.querySelector('.header__profile'),
-            breakpoint: 1024
-        },
-        
-        search: {
-            element: document.querySelector('.header__search'),
-            breakpoint: 800
-        },
-
-        nav: {
-            element: document.getElementById('nav'),
-            breakpoint: 800
-        },
+    const toggleSelect = (isOpen) => {
+        selectOptions.style.display = isOpen ? 'block' : 'none';
+        arrow.classList.toggle('rotate', isOpen);
     };
 
-    const originalPositions = new WeakMap();
+    const handleOptionClick = (option) => {
+        const title = option.querySelector('.select-value__title').textContent;
+        const subtitle = option.querySelector('.select-value__subtitle').textContent;
 
-    function manageElement(elementInfo, screenWidth) {
-        const { element, breakpoint } = elementInfo;
+        hiddenSelect.value = option.dataset.value;
+        document.querySelector('.select-value__title').textContent = title;
+        document.querySelector('.select-value__subtitle').textContent = subtitle;
+        toggleSelect(false);
+    };
+
+    selectValue.addEventListener('click', () => toggleSelect(selectOptions.style.display !== 'block'));
+    
+    selectOptions.addEventListener('click', (e) => {
+        const option = e.target.closest('li');
+        if (option) handleOptionClick(option);
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!selectValue.contains(e.target) && !selectOptions.contains(e.target)) {
+            toggleSelect(false);
+        }
+    });
+};
+
+
+class ResponsiveMenu {
+    constructor() {
+        this.burgerButton = document.getElementById('burger-button');
+        this.sideBar = document.getElementById('side-bar');
+        this.sideElements = this.sideBar.querySelector('.side-bar__elements');
+    
+        this.elements = {
+        profile: { element: document.querySelector('.header__profile'), breakpoint: 1024 },
+        search: { element: document.querySelector('.header__search'), breakpoint: 800 },
+        nav: { element: document.getElementById('nav'), breakpoint: 800 }
+    };
+
+        this.originalPositions = new WeakMap();
+        this.resizeObserver = new ResizeObserver(this.handleResize.bind(this));
+        this.init();
+    }
+
+    init() {
+        this.burgerButton.addEventListener('click', this.toggleMenu.bind(this));
+        this.resizeObserver.observe(document.documentElement);
+        this.manageLayout();
+    }
+
+    toggleMenu() {
+        this.sideBar.classList.toggle('active');
+        this.burgerButton.classList.toggle('active');
+    }
+
+    manageElement({ element, breakpoint }, width) {
         if (!element) return;
 
-        const shouldMove = screenWidth <= breakpoint;
+        const shouldMove = width <= breakpoint;
         const currentParent = element.parentElement;
 
-        if (shouldMove && currentParent !== sideElements) {
-            if (!originalPositions.has(element)) {
-            originalPositions.set(element, {
+    if (shouldMove && currentParent !== this.sideElements) {
+        if (!this.originalPositions.has(element)) {
+            this.originalPositions.set(element, {
                 parent: currentParent,
                 nextSibling: element.nextElementSibling
             });
         }
-            sideElements.appendChild(element);
-        
-    } else if (!shouldMove && currentParent === sideElements) {
-        const original = originalPositions.get(element);
-            if (original) {
-                original.parent.insertBefore(element, original.nextSibling);
-            }
-        }
-    }
-
-    function manageLayout() {
-        const width = window.innerWidth;
-        
-        Object.values(elements).reverse().forEach(el => {
-            manageElement(el, width);
-        });
-    }
-
-    burgerButton.addEventListener('click', () => {
-        sideBar.classList.toggle('active');
-        burgerButton.classList.toggle('active');
-    });
-
-    window.addEventListener('resize', () => {
-        manageLayout();
-        if (window.innerWidth > 1024) {
-            sideBar.classList.remove('active');
-        }
-    });
-
-    manageLayout();
-});
-
-
-class GridManager {
-    constructor() {
-        this.grid = document.querySelector('.main__content');
-        this.observer = new MutationObserver(mutations => 
-            this.handleMutation(mutations));
-        this.observer.observe(this.grid, { 
-            childList: true,
-            subtree: true
-        });
-    }
-
-    handleMutation(mutations) {
-        mutations.forEach(mutation => {
-            mutation.removedNodes.forEach(node => {
-                if(node.classList.contains('container-2')) {
-                    this.expandElement('.container-3');
-                }
-                if(node.classList.contains('container-3')) {
-                    this.expandElement('.container-2');
-                }
-                if(node.classList.contains('container-5')) {
-                    this.expandElement('.container-6');
-                }
-                if(node.classList.contains('container-6')) {
-                    this.expandElement('.container-5');
-                }
-            });
-            
-            mutation.addedNodes.forEach(node => {
-                if(node.classList.contains('container-2')) {
-                    this.resetElement('.container-3');
-                }
-                if(node.classList.contains('container-3')) {
-                    this.resetElement('.container-2');
-                }
-                if(node.classList.contains('container-5')) {
-                    this.resetElement('.container-6');
-                }
-                if(node.classList.contains('container-6')) {
-                    this.resetElement('.container-5');
-                }
-            });
-        });
-    }
-
-    expandElement(selector) {
-        const element = document.querySelector(selector);
-        if(element) {
-            element.classList.add('expanded');
-            this.grid.style.display = 'none';
-            this.grid.offsetHeight; 
-            this.grid.style.display = 'grid';
-        }
-    }
-
-    resetElement(selector) {
-        const element = document.querySelector(selector);
-        if(element) {
-            element.classList.remove('expanded');
-        }
+        this.sideElements.appendChild(element);
+    } else if (!shouldMove && currentParent === this.sideElements) {
+        const original = this.originalPositions.get(element);
+        if (original) original.parent.insertBefore(element, original.nextSibling);
     }
 }
 
-const gridManager = new GridManager();
+    manageLayout() {
+        const width = window.innerWidth;
+        Object.values(this.elements).forEach(el => this.manageElement(el, width));
+    }
+
+    handleResize() {
+        this.manageLayout();
+    if (window.innerWidth > 1024) {
+        this.sideBar.classList.remove('active');
+        }}
+}
+
+    class GridManager {
+        constructor() {
+    this.grid = document.querySelector('.main__content');
+    this.pairs = new Map([
+        ['container-2', 'container-3'],
+        ['container-3', 'container-2'],
+        ['container-5', 'container-6'],
+        ['container-6', 'container-5']
+    ]);
+
+    this.observer = new MutationObserver(mutations => 
+        mutations.forEach(m => this.handleMutation(m)));
+    this.observer.observe(this.grid, { 
+        childList: true,
+        subtree: true
+    });
+}
+
+    handleMutation(mutation) {
+        mutation.removedNodes.forEach(node => {
+            const target = this.pairs.get(node.classList?.[0]);
+            if (target) this.toggleElement(target, true);
+        });
+
+        mutation.addedNodes.forEach(node => {
+        const target = this.pairs.get(node.classList?.[0]);
+        if (target) this.toggleElement(target, false);
+    });
+}
+
+    toggleElement(selector, expand) {
+        const element = document.querySelector(selector);
+        if (!element) return;
+    
+        element.classList.toggle('expanded', expand);
+        if (expand) {
+        requestAnimationFrame(() => {
+            this.grid.style.display = 'none';
+            this.grid.offsetHeight;
+            this.grid.style.display = 'grid';
+        });
+    }}
+}
+
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    initIcons();
+    initCustomSelect();
+    new ResponsiveMenu();
+    new GridManager();
+});
