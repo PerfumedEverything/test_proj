@@ -85,19 +85,33 @@ class ResponsiveMenu {
         const shouldMove = width <= breakpoint;
         const currentParent = element.parentElement;
 
-    if (shouldMove && currentParent !== this.sideElements) {
-        if (!this.originalPositions.has(element)) {
-            this.originalPositions.set(element, {
-                parent: currentParent,
-                nextSibling: element.nextElementSibling
-            });
+        if (shouldMove && currentParent !== this.sideElements) {
+            if (!this.originalPositions.has(element)) {
+                this.originalPositions.set(element, {
+                    parent: currentParent,
+                    nextSibling: element.nextElementSibling
+                });
+            }
+            this.sideElements.appendChild(element);
+        } else if (!shouldMove && currentParent === this.sideElements) {
+            const original = this.originalPositions.get(element);
+            
+            if (original?.parent?.isConnected) {
+                try {
+                    const isValidAnchor = original.nextSibling?.parentNode === original.parent;
+                    
+                    if (isValidAnchor) {
+                        original.parent.insertBefore(element, original.nextSibling);
+                    } else {
+                        original.parent.appendChild(element);
+                    }
+                } catch (error) {
+                    console.error("Element move error:", error);
+                    original.parent.appendChild(element);
+                }
+            }
         }
-        this.sideElements.appendChild(element);
-    } else if (!shouldMove && currentParent === this.sideElements) {
-        const original = this.originalPositions.get(element);
-        if (original) original.parent.insertBefore(element, original.nextSibling);
     }
-}
 
     manageLayout() {
         const width = window.innerWidth;
